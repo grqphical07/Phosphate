@@ -52,6 +52,7 @@ class Shell:
     def changeCWD(self, newCWD):
         self.path = os.path.abspath(newCWD)
         self.prompt = f"{Fore.YELLOW}{getpass.getuser()}@{socket.gethostname()}: {Fore.CYAN}{os.path.splitdrive(self.path)[1]}\\\033[39m "
+        
     def help(self):
         for file in os.listdir("commands/"):
                 if not file == "__init__.py" and file.endswith(".py"):
