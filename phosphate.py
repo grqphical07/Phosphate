@@ -16,6 +16,14 @@ class Shell:
     def __init__(self):
         self.path = os.getcwd()
         self.prompt = f"{Fore.YELLOW}{getpass.getuser()}@{socket.gethostname()}: {Fore.CYAN}{os.path.splitdrive(self.path)[1]}\\\033[39m "
+        self.path_variables = {}
+        if not os.path.exists(".PATH"):
+            with open(".PATH", "w") as f:
+                f.write("")
+        with open(".PATH", "r") as f:
+            for line in f.readlines():
+                name, path = line.split("=")
+                self.path_variables[name] = path
         self.running = True
         self.isCommand = False
     
@@ -31,7 +39,18 @@ class Shell:
             elif args[0] == "help":
                 self.help()
             else:
+                isPathVar = False
+                # first check if its a path variable then run it
+                for k, v in self.path_variables.items():
+                    if args[0] == k:
+                        args.pop(0)
+                        args.insert(0, v)
+                        subprocess.run(args, capture_output=True)
+                        isPathVar = True
                 
+                if isPathVar:
+                    continue
+                        
                 # Loop through every file in the commands folder and if its valid run it's command function
                 for file in os.listdir("commands/"):
                     if args[0] == file[0:-3] and not file == "__init__.py" and file.endswith(".py"):

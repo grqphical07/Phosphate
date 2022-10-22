@@ -2,7 +2,12 @@
 import os
 
 def command(shell, args):
-    os.rmdir(os.path.join(shell.path, args[1]))
+    if args[1] == "*":
+        for dir in os.listdir(shell.path):
+            if os.path.isdir(os.path.join(shell.path, dir)):
+                os.rmdir(os.path.join(shell.path, dir))
+    else:
+        os.rmdir(os.path.join(shell.path, args[1]))
 
 def help():
-    return ("rmdir", "Removes a directory: rmdir [DIRECTORY NAME]")
+    return ("rmdir", "Removes a directory: rmdir [DIRECTORY NAME]. Use * to delete all directories in the current directory")
